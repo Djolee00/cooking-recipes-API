@@ -17,4 +17,14 @@ class Recipe extends Model
         'num_of_servings',
         'description'
     ];
+
+    public function steps()
+    {
+        return $this->hasMany(Step::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
