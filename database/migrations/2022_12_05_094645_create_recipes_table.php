@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 return new class extends Migration
 {
@@ -15,11 +16,11 @@ return new class extends Migration
     {
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->integer('prep_time');
             $table->integer('cook_time');
             $table->integer('numOfServings');
-            $table->text('description');
+            $table->text('description')->unique();
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
         });
