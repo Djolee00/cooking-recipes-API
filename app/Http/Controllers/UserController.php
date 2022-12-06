@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+
+use function PHPSTORM_META\map;
 
 class UserController extends Controller
 {
@@ -14,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
+        return new UserCollection(User::all());
     }
 
 
@@ -57,7 +61,7 @@ class UserController extends Controller
             return response()->json("User with id $id not found", 404);
         }
 
-        return response()->json($user);
+        return response()->json(new UserResource($user));
     }
 
 
