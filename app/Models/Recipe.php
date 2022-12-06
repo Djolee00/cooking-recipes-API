@@ -16,6 +16,7 @@ class Recipe extends Model
         'cook_time',
         'num_of_servings',
         'description'
+
     ];
 
     public function steps()

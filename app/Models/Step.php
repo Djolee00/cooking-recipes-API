@@ -11,7 +11,8 @@ class Step extends Model
 
     protected $fillable = [
         'description',
-        'ordinal_number'
+        'ordinal_number',
+        'recipe_id'
     ];
 
     // this creates property, we don't call it as a function, but like a property

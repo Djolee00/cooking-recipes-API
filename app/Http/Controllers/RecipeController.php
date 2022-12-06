@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RecipeCollection;
 use App\Http\Resources\RecipeResource;
+use App\Models\Ingredient;
 use App\Models\Recipe;
+use App\Models\Step;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class RecipeController extends Controller
 {
@@ -37,6 +40,32 @@ class RecipeController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $this->validate($request, [
+                'title' => 'required',
+                'prep_time' => 'required',
+                'cook_time' => 'required',
+                'num_of_servings' => 'required',
+                'description' => 'required'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $th) {
+            return response()->json("All fields must be filled", 400);
+        }
+        $recipeData = [
+            'title' => $request->title,
+            'prep_time' => $request->prep_time,
+            'cook_time' => $request->cook_time,
+            'num_of_servings' => $request->num_of_servings,
+            'description' => $request->description,
+            'user_id' => $request->user_id
+        ];
+        $newRecipe = Recipe::create($recipeData);
+
+        $this->saveIngredients($newRecipe->id, $request);
+        $this->saveSteps($newRecipe->id, $request);
+
+        $newRecipe = Recipe::find($newRecipe->id);
+        return response()->json(new RecipeResource($newRecipe), 200);
     }
 
     /**
@@ -82,5 +111,35 @@ class RecipeController extends Controller
     public function destroy(Recipe $recipe)
     {
         //
+    }
+
+
+    private function saveIngredients($id, $request)
+    {
+
+        $ingredients = $request->ingredients;
+        foreach ($ingredients as $ing) {
+            $ingData = [
+                'name' => $ing['name'],
+                'quantity' => $ing['quantity'],
+                'recipe_id' => $id
+            ];
+
+            Ingredient::create($ingData);
+        }
+    }
+
+    private function saveSteps($id, $request)
+    {
+        $steps = $request->steps;
+        foreach ($steps as $step) {
+            $stepData = [
+                'description' => $step['description'],
+                'ordinal_number' => $step['ordinal_number'],
+                'recipe_id' => $id
+            ];
+
+            Step::create($stepData);
+        }
     }
 }
