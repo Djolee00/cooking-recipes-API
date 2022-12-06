@@ -79,28 +79,6 @@ class RecipeController extends Controller
         return new RecipeResource($recipe);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Recipe  $recipe
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Recipe $recipe)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Recipe  $recipe
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Recipe $recipe)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -108,9 +86,27 @@ class RecipeController extends Controller
      * @param  \App\Models\Recipe  $recipe
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Recipe $recipe)
+    public function destroy($id)
     {
-        //
+        $tempRecipe = Recipe::find($id);
+        if (is_null($tempRecipe)) {
+            return response()->json("Recipe with id $id doesn't exist.");
+        }
+
+        $tempRecipe->delete();
+
+        $ings = Ingredient::where('recipe_id', '=', $id);
+        if (!is_null($ings)) {
+            $ings->delete();
+        }
+
+        $steps = Step::where('recipe_id', '=', $id);
+
+        if (!is_null($steps)) {
+            $steps->delete();
+        }
+
+        return response()->json($tempRecipe, 200);
     }
 
 
