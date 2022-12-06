@@ -110,7 +110,7 @@ class UserController extends Controller
     {
         $tempUser = User::find($id);
         if (is_null($tempUser)) {
-            return response()->json("User with id $id doesn't exist.");
+            return response()->json("User with id $id doesn't exist.", 400);
         }
 
         $tempUser->delete();
