@@ -74,9 +74,14 @@ class RecipeController extends Controller
      * @param  \App\Models\Recipe  $recipe
      * @return \Illuminate\Http\Response
      */
-    public function show(Recipe $recipe)
+    public function show($id)
     {
-        return new RecipeResource($recipe);
+        $rec = Recipe::find($id);
+        if (is_null($rec)) {
+            return response()->json("Recipe with id $id not found", 404);
+        }
+
+        return response()->json(new RecipeResource($rec));
     }
 
 
